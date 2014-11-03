@@ -46,7 +46,27 @@ Disk:300G
 
 
 
+网络设置
 
+controller
+     eth0:10.1.99.101   (management network)
+     eht1:(disabled)
+
+network
+     eth0:10.1.99.102   (management network)
+     eht1:no ip  (private network)
+
+compute1
+     eth0:10.1.99.104   (management network)
+     eht1:no ip  (private network)
+
+compute2
+     eth0:10.1.99.106   (management network)
+     eht2:no ip  (private network)
+     
+cinder
+     eth0:10.1.99.105   (management network)
+     eht1:(disabled)
 
 
 
