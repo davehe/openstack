@@ -9,11 +9,48 @@ openstack 手动安装手册
 
 物理机
 
-ip:10.1.99.101
+ip:eth0:10.1.99.101
 Name: controller
 vCPU: 8
 Memory :16G
 Disk:300G
+
+
+
+ip:eth0:10.1.99.102  eth1:无ip与交换机对应端口绑trunk     
+Name: network
+vCPU: 8
+Memory :16G
+Disk:300G
+
+
+ip:eth0:10.1.99.104  eth1:无ip与交换机对应端口绑trunk     
+Name: compute1
+vCPU: 8
+Memory :16G
+Disk:1T
+
+ip:eth0:10.1.99.106  eth1:无ip与交换机对应端口绑trunk     
+Name: compute2
+vCPU: 8
+Memory :48G
+Disk:300G
+
+
+
+ip:eth0:10.1.99.105  
+Name: cinder
+vCPU: 8
+Memory :16G
+Disk:300G
+
+
+
+
+
+
+
+
 
 
 
