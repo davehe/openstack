@@ -4,6 +4,16 @@ openstack 手动安装手册
 
 
 部署架构
+采用多节点分开部署方式
+
+
+物理机
+
+ip:10.1.99.101
+Name: controller
+vCPU: 8
+Memory :16G
+Disk:300G
 
 
 
