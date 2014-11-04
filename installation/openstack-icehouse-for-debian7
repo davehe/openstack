@@ -141,6 +141,88 @@ mysql_install_db
 mysql_secure_installation
 
 
+安装消息服务
+apt-get install rabbitmq-server
+
+更改密码
+rabbitmqctl change_password guest hc1226
+
+
+安装keystone服务
+apt-get install keystone #会初始化keystone数据库,会为keystone设置admin账户的token
+
+更改keystone用户权限
+GRANT ALL PRIVILEGES ON `keystonedb`.* TO 'keystone'@% IDENTIFIED BY 'hc';
+GRANT ALL PRIVILEGES ON `keystonedb`.* TO 'keystone'@'%' IDENTIFIED BY 'hc';
+
+
+设置认证信息
+export OS_SERVICE_TOKEN=hc
+export OS_SERVICE_ENDPOINT=http://controller:35357/v2.0
+
+创建管理员和系统服务使用的租户
+keystone tenant-create --name=admin --description="Admin Tenant"
+keystone tenant-create --name=service --description="Service Tenant"
+
+创建管理员用户
+keystone user-create --name=admin --pass=admin --email=admin@example.com
+
+创建管理员角色
+keystone role-create --name=admin
+
+为管理员用户分配管理员角色
+keystone user-role-add --user=admin --tenant=admin --role=admin
+
+为keystone服务建立service
+keystone service-create --name=keystone --type=identity --description="Keystone Identity Service"
+
+为keystone建立service和endpoint关联
+keystone endpoint-create \
+--service-id=$(keystone service-list | awk '/ identity / {print $2}') \
+--publicurl=http://controller:5000/v2.0 \
+--internalurl=http://controller:5000/v2.0 \
+--adminurl=http://controller:35357/v2.0
+
+
+验证keystone安装的正确性
+取消先前的Token变量，不然会干扰新建用户的验证。
+unset OS_SERVICE_TOKEN OS_SERVICE_ENDPOINT
+
+
+用命令行方式验证
+keystone --os-username=admin --os-password=admin --os-auth-url=http://controller:35357/v2.0 token-get
+keystone --os-username=admin --os-password=admin --os-tenant-name=admin --os-auth-url=http://controller:35357/v2.0 token-get
+
+
+写入环境变量配置
+export OS_USERNAME=admin
+export OS_PASSWORD=admin
+export OS_TENANT_NAME=admin
+export OS_AUTH_URL=http://controller:35357/v2.0
+
+
+加载环境变量
+source admin-openrc.sh
+
+测试
+keystone token-get
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
