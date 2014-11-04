@@ -75,12 +75,20 @@ iface eth1 inet manual
     up ip link set dev $IFACE up
     down up link set dev $IFACE down
 
+
 公共配置
+
 内部已经搭好一套oenpstack源,每台节点上配置/etc/apt/sources.list
 deb http://10.1.1.172/debian  wheezy main non-free contrib
 deb http://10.1.1.172/openstack_icehouse icehouse main
 deb http://10.1.1.172/openstack_icehouse icehouse-backports main
 
+更新并安装key
+apt-get update && apt-get install gplhost-archive-keyring
+
+更新升级最新操作系统
+apt-get update && apt-get dist-upgrade
+reboot
 
 更改hosts配置
 10.1.99.101 controller 
@@ -100,7 +108,37 @@ NTPSERVERS="10.1.1.10"
 */30 * * * *    /usr/sbin/ntpdate-debian && /sbin/hwclock --directisa -w 
 
 
+安装python-mysqldb 
+apt-get install python-mysqldb
 
+
+
+
+
+
+控制节点(contronller) 安装
+
+安装数据库mysql
+
+apt-get install mysql-server
+
+更改配置文件/etc/mysql/my.cnf
+[mysqld]
+...
+bind-address = 10.0.0.11
+[mysqld]
+...
+default-storage-engine = innodb
+innodb_file_per_table
+collation-server = utf8_general_ci
+init-connect = 'SET NAMES utf8'
+
+重启数据库
+service mysql restart
+
+删除匿名用户,加强数据库安全性
+mysql_install_db
+mysql_secure_installation
 
 
 
