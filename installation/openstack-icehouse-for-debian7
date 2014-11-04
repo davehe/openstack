@@ -210,6 +210,68 @@ keystone token-get
 
 
 
+安装glance服务
+
+apt-get install glance python-glanceclient #初始化glance数据库
+
+
+配置glance连接数据库/etc/glance/glance-api.conf and /etc/glance/glanceregistry.conf
+
+[database]
+connection = mysql://glance-common:hc1226@controller/glancedb
+
+
+配置数据库权限
+GRANT ALL PRIVILEGES ON `glancedb`.* TO 'glance-common'@'localhost' IDENTIFIED BY 'hc';
+GRANT ALL PRIVILEGES ON `glancedb`.* TO 'glance-common'@'%' IDENTIFIED BY 'hc';
+
+
+创建glance 用户
+keystone user-create --name=glance --pass=hc --email=glance@example.com
+
+并分配service角色
+keystone user-role-add --user=glance --tenant=service --role=admin
+
+创建glance 服务
+keystone service-create --name=glance --type=image --description="Glance Image Service"
+
+创建keystone 的endpoint
+keystone endpoint-create \
+--service-id=$(keystone service-list | awk '/ image / {print $2}')  \
+--publicurl=http://controller:9292 \
+--internalurl=http://controller:9292 \
+--adminurl=http://controller:9292
+
+
+修改/etc/glance/glance-api.conf and /etc/glance/glanceregistry.conf
+[keystone_authtoken]
+auth_host = 10.1.99.101
+auth_port = 35357
+auth_protocol = http
+admin_tenant_name = service
+admin_user = glance
+admin_password = hc
+
+启动glance服务
+/etc/init.d/glance-api start
+/etc/init.d/glance-registry start
+
+
+测试
+root@controller:glance# glance image-list
++----+------+-------------+------------------+------+--------+
+| ID | Name | Disk Format | Container Format | Size | Status |
++----+------+-------------+------------------+------+--------+
++----+------+-------------+------------------+------+--------+
+
+
+
+
+
+
+
+
+
 
 
 
