@@ -69,6 +69,33 @@ cinder
      eht1:(disabled)
 
 
+network,compute1,compute2 eth1配置
+auto eth1
+iface eth1 inet manual
+    up ip link set dev $IFACE up
+    down up link set dev $IFACE down
+
+公共配置
+内部已经搭好一套oenpstack源,每台节点上配置/etc/apt/sources.list
+deb http://10.1.1.172/debian  wheezy main non-free contrib
+deb http://10.1.1.172/openstack_icehouse icehouse main
+deb http://10.1.1.172/openstack_icehouse icehouse-backports main
+
+
+更改hosts配置
+10.1.99.101 controller 
+10.1.99.102 network
+10.1.99.104 compute1
+10.1.99.106 compute2
+10.1.99.105 cinder
+
+
+
+
+
+
+
+
 
 
 
