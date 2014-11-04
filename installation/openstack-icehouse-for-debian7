@@ -90,9 +90,14 @@ deb http://10.1.1.172/openstack_icehouse icehouse-backports main
 10.1.99.105 cinder
 
 
+安装ntp服务
+apt-get install ntpdate
+更改配置文件/etc/default/ntpdate  指定到内网时间服务器10.1.1.10
+NTPSERVERS="10.1.1.10"
 
 
-
+增加定时任务
+*/30 * * * *    /usr/sbin/ntpdate-debian && /sbin/hwclock --directisa -w 
 
 
 
