@@ -374,7 +374,6 @@ admin_tenant_name = service
 admin_user = neutron
 admin_password = hc
 
-
 # ======== neutron nova interactions ==========
 notify_nova_on_port_status_changes = True
 notify_nova_on_port_data_changes = True
@@ -383,7 +382,6 @@ nova_admin_username = admin
 nova_admin_tenant_id = a5e40cc19c7d4022a0a32dd67588c8bb
 nova_admin_password = ta0mee@123
 nova_admin_auth_url = http://10.1.99.101:35357/v2.0
-
 
 
 配置Neutron openvswitch 使用vlan模式
@@ -398,10 +396,23 @@ bridge_mappings = physnet_inner:br-inner #br-inner稍后会在网络节点和计
 [securitygroup]
 
 
+配置nova 使用Neutron 作为network服务
+neutron_url=http://10.1.99.101:9696
+neutron_auth_strategy=keystone
+neutron_admin_tenant_name=service
+neutron_admin_username=neutron
+neutron_admin_password=hc
+neutron_admin_auth_url=http://10.1.99.101:35357/v2.0
 
 
+重启nova controller 上的服务
 
+service nova-api restart
+service nova-scheduler restart
+service nova-conductor restart
 
+启动Neutron server
+service neutron-server start
 
 
 
