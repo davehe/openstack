@@ -147,6 +147,11 @@ apt-get install rabbitmq-server
 更改密码
 rabbitmqctl change_password guest hc1226
 
+配置/etc/rabbitmq/rabbitmq-env.conf 
+RABBITMQ_NODE_IP_ADDRESS=10.1.99.101
+
+重启服务
+/etc/init.d/rabbitmq-server restart
 
 安装keystone服务
 apt-get install keystone #会初始化keystone数据库,会为keystone设置admin账户的token
