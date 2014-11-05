@@ -384,7 +384,7 @@ nova_admin_password = ta0mee@123
 nova_admin_auth_url = http://10.1.99.101:35357/v2.0
 
 
-配置Neutron openvswitch 使用vlan模式
+配置Neutron openvswitch 使用vlan模式 /etc/neutron/plugins/openvswitch
 [ovs]
 tenant_network_type = vlan
 network_vlan_ranges = physnet_inner:10:20   #稍后会在交换机设置trunk号范围
@@ -428,19 +428,69 @@ net.ipv4.conf.default.rp_filter=0
 
 立即生效
 sysctl -p
-apt-get install linux-headers-3.2.0-4-amd64
+apt-get install linux-headers-3.2.0-4-amd64  bridge-utils
 apt-get install neutron-plugin-ml2 neutron-plugin-openvswitch-agent openvswitch-datapath-dkms neutron-l3-agent neutron-dhcp-agent
 
 
+配置/etc/neutron.conf  (可以cp一份从控制节点)
+rabbit_host = 10.1.99.101
+rabbit_userid = guest
+rabbit_password = hc
+
+[database]
+connection = mysql://neutron-common:hc@neutron/neutrondb
+
+auth_strategy keystone
+[keystone_authtoken]
+auth_host = 10.1.99.101
+auth_port = 35357
+auth_protocol = http
+admin_tenant_name = service
+admin_user = neutron
+admin_password = hc
+
+# ======== neutron nova interactions ==========
+notify_nova_on_port_status_changes = True
+notify_nova_on_port_data_changes = True
+nova_url = http://10.1.99.101:8774/v2
+nova_admin_username = admin
+nova_admin_tenant_id = a5e40cc19c7d4022a0a32dd67588c8bb
+nova_admin_password = ta0mee@123
+nova_admin_auth_url = http://10.1.99.101:35357/v2.0
+
+
+创建br-inner网桥,将eth1桥接上去,用以网络节点与计算节点互联
+/etc/init.d/openvswitch-switch start
+ovs-vsctl add-br br-inner
+ovs-vsctl add-port br-inner eth1
+ovs-vsctl show
+a219b33a-9f74-42f3-bd33-8f983f2ad74f
+    Bridge br-int
+        fail_mode: secure
+        Port br-int
+            Interface br-int
+                type: internal
+    Bridge br-inner
+        Port br-inner
+            Interface br-inner
+                type: internal
+        Port "eth1"
+            Interface "eth1"
+    ovs_version: "2.3.0"
 
 
 
 
-
-
-
-
-
+ovs-agent服务配置  使用vlan模式 /etc/neutron/plugins/openvswitch
+[ovs]
+tenant_network_type = vlan
+network_vlan_ranges = physnet_inner:10:20   #稍后会在交换机设置trunk号范围
+enable_tunneling = False
+integration_bridge = br-int  #默认虚拟机虚拟子网网桥
+local_ip = 10.1.99.102
+bridge_mappings = physnet_inner:br-inner #br-inner稍后会在网络节点和计算节点创建 并将网卡eth1桥接上去
+[agent]
+[securitygroup]
 
 
 
