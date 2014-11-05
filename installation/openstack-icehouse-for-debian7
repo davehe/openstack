@@ -386,11 +386,16 @@ nova_admin_auth_url = http://10.1.99.101:35357/v2.0
 
 
 
-
-
-
-
-
+配置Neutron openvswitch 使用vlan模式
+[ovs]
+tenant_network_type = vlan
+network_vlan_ranges = physnet_inner:10:20   #稍后会在交换机设置trunk号范围
+enable_tunneling = False
+integration_bridge = br-int  #默认虚拟机虚拟子网网桥
+local_ip = 10.1.99.101
+bridge_mappings = physnet_inner:br-inner #br-inner稍后会在网络节点和计算节点创建 并将网卡eth1桥接上去
+[agent]
+[securitygroup]
 
 
 
