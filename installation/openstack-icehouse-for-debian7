@@ -116,7 +116,7 @@ apt-get install python-mysqldb
 
 
 
-控制节点(contronller) 安装
+控制节点(contronller 10.1.99.101) 安装
 
 安装数据库mysql
 
@@ -416,6 +416,20 @@ service neutron-server start
 
 
 
+
+
+网络节点安装 (network 10.1.99.102):
+
+允许ip forward
+vi /etc/sysctl.conf 
+net.ipv4.ip_forward=1
+net.ipv4.conf.all.rp_filter=0
+net.ipv4.conf.default.rp_filter=0
+
+立即生效
+sysctl -p
+apt-get install linux-headers-3.2.0-4-amd64
+apt-get install neutron-plugin-ml2 neutron-plugin-openvswitch-agent openvswitch-datapath-dkms neutron-l3-agent neutron-dhcp-agent
 
 
 
