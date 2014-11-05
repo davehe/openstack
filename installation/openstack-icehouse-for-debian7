@@ -438,7 +438,7 @@ rabbit_userid = guest
 rabbit_password = hc
 
 [database]
-connection = mysql://neutron-common:hc@neutron/neutrondb
+connection = mysql://neutron-common:hc@controller/neutrondb
 
 auth_strategy keystone
 [keystone_authtoken]
@@ -481,7 +481,7 @@ a219b33a-9f74-42f3-bd33-8f983f2ad74f
 
 
 
-ovs-agent服务配置  使用vlan模式 /etc/neutron/plugins/openvswitch
+设置ovs-agent服务配置  使用vlan模式 /etc/neutron/plugins/openvswitch
 [ovs]
 tenant_network_type = vlan
 network_vlan_ranges = physnet_inner:10:20   #稍后会在交换机设置trunk号范围
@@ -493,9 +493,30 @@ bridge_mappings = physnet_inner:br-inner #br-inner稍后会在网络节点和计
 [securitygroup]
 
 
+设置dhcp-agent服务配置  /etc/neutron/dhcp_agent.ini 在此模式下,网络节点之提供DHCP与元数据转发服务,不需要启动L3服务 /etc/neutron/dhcp_agent.ini
+[DEFAULT]
+debug = True 
+interface_driver = neutron.agent.linux.interface.OVSInterfaceDriver
+dhcp_driver = neutron.agent.linux.dhcp.Dnsmasq
+enable_metadata_network = True
+
+如果有安装元数据代理neutron-metadata-agent,则要确保元数据指向nova metadata server 10.1.99.101,即nova-api服务控制网络的ip地址
+/etc/neutron/metadata_agent.ini
+...
+nova_metadata_ip = 10.1.99.101
+metadata_proxy_shared_secret = hc
+相应的要在控制节点10.1.99.101 更改/etc/nova/nova.conf
+service_neutron_metadata_proxy=True
+neutron_metadata_proxy_shared_secret=hc
 
 
+启动Neutron 服务
 
+service neutron-plugin-openvswitch-agent start
+service neutron-dhcp-agent start
+
+service neutron-l3-agent start #这种模式在此环境没有使用
+service neutron-metadata-agent start #如果安装使用元数据代理可以启动起来,这里没有使用
 
 
 
