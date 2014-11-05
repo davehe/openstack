@@ -352,6 +352,54 @@ keystone endpoint-create \
 --internalurl http://controller:9696
   
 
+配置数据库权限
+GRANT ALL PRIVILEGES ON `neutrondb`.* TO 'neutron-common'@'localhost'  IDENTIFIED BY 'hc';
+GRANT ALL PRIVILEGES ON `neutrondb`.* TO 'neutron-common'@'%'  IDENTIFIED BY 'hc';
+
+
+配置/etc/neutron.conf
+rabbit_host = 10.1.99.101
+rabbit_userid = guest
+rabbit_password = hc
+
+[database]
+connection = mysql://neutron-common:hc@neutron/neutrondb
+
+auth_strategy keystone
+[keystone_authtoken]
+auth_host = 10.1.99.101
+auth_port = 35357
+auth_protocol = http
+admin_tenant_name = service
+admin_user = neutron
+admin_password = hc
+
+
+# ======== neutron nova interactions ==========
+notify_nova_on_port_status_changes = True
+notify_nova_on_port_data_changes = True
+nova_url = http://10.1.99.101:8774/v2
+nova_admin_username = admin
+nova_admin_tenant_id = a5e40cc19c7d4022a0a32dd67588c8bb
+nova_admin_password = ta0mee@123
+nova_admin_auth_url = http://10.1.99.101:35357/v2.0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
