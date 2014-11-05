@@ -317,6 +317,28 @@ admin_password = hc
 auth_version = v2.0
 
 
+启动服务
+
+service openstack-nova-api start
+service openstack-nova-cert start
+service openstack-nova-consoleauth start
+service openstack-nova-scheduler start
+service openstack-nova-conductor start
+service openstack-nova-novncproxy start
+
+检查服务
+
+nova-manage service list
+Binary           Host                                 Zone             Status     State Updated_At
+nova-conductor   controller                           internal         enabled    :-)   2014-11-05 07:59:42
+nova-consoleauth controller                           internal         enabled    :-)   2014-11-05 07:59:36
+nova-cert        controller                           internal         enabled    :-)   2014-11-05 07:59:33
+nova-scheduler   controller                           internal         enabled    :-)   2014-11-05 07:59:39
+
+
+
+
+
 
 
 
