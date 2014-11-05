@@ -396,7 +396,7 @@ bridge_mappings = physnet_inner:br-inner #br-inner稍后会在网络节点和计
 [securitygroup]
 
 
-配置nova 使用Neutron 作为network服务
+配置/etc/nova/nova.conf 使用Neutron 作为network服务
 neutron_url=http://10.1.99.101:9696
 neutron_auth_strategy=keystone
 neutron_admin_tenant_name=service
