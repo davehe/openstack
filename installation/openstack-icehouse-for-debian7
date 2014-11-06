@@ -657,8 +657,35 @@ root@controller:neutron# neutron agent-list
 
 
 
+控制节点安装dashboard(10.1.99.101)：
+
+安装相关包
+apt-get install apache2 memcached libapache2-mod-wsgi openstack-dashboard
+
+配置memcached
+
+vi /etc/openstack-dashboard/local_settings 
+
+CACHES = {
+'default': {
+'BACKEND' : 'django.core.cache.backends.memcached.MemcachedCache',
+'LOCATION' : '127.0.0.1:11211'
+}
+}
+
+配置Keystone hostname
+
+vi /etc/openstack-dashboard/local_settings 
+OPENSTACK_HOST = "10.1.99.101"
 
 
+启动Dashboard 相关服务
+service apache2 restart
+service memcached restart
+
+
+打开浏览器验证
+http://10.1.99.101/dashboard
 
 
 
