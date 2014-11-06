@@ -428,8 +428,8 @@ net.ipv4.conf.default.rp_filter=0
 
 立即生效
 sysctl -p
-apt-get install linux-headers-3.2.0-4-amd64  bridge-utils
-apt-get install neutron-plugin-ml2 neutron-plugin-openvswitch-agent openvswitch-datapath-dkms neutron-l3-agent neutron-dhcp-agent
+aptitude install linux-headers-3.2.0-4-amd64  bridge-utils
+aptitude install neutron-plugin-ml2 neutron-plugin-openvswitch-agent openvswitch-datapath-dkms neutron-l3-agent neutron-dhcp-agent
 
 
 配置/etc/neutron.conf  (可以cp一份从控制节点)
@@ -568,6 +568,9 @@ admin_user = nova
 admin_password = hc1226
 auth_version = v2.0
 
+启动服务
+ /etc/init.d/nova-compute start
+
 
 配置内核参数
 net.ipv4.conf.all.rp_filter=0
@@ -575,13 +578,55 @@ net.ipv4.conf.default.rp_filter=0
 
 sysctl -p
 
+aptitude install linux-headers-3.2.0-4-amd64  bridge-utils
+aptitude install neutron-common neutron-plugin-ml2 neutron-pluginopenvswitch-agent openvswitch-datapath-dkms
 
 
+配置/etc/neutron/neutron.conf
+
+[DEFAULT]
+verbose = True
+auth_strategy = keystone
+rabbit_host = 10.1.99.101
+rabbit_password = hc1226
+rabbit_userid = guest
+notify_nova_on_port_status_changes = True
+notify_nova_on_port_data_changes = True
+nova_url = http://10.1.99.101:8774/v2
+nova_admin_username = admin
+nova_admin_tenant_id = a5e40cc19c7d4022a0a32dd67588c8bb
+nova_admin_password = hc1226
+nova_admin_auth_url = http://10.1.99.101:35357/v2.0
+
+[keystone_authtoken]
+auth_host = 10.1.99.101
+auth_port = 35357
+auth_protocol = http
+admin_tenant_name = service
+admin_user = neutron
+admin_password = hc1226
 
 
+[database]
+connection = mysql://neutron-common:hc1226@controller/neutrondb
 
 
+创建br-inner网桥,将eth1桥接上去,用以网络节点与计算节点互联
+/etc/init.d/openvswitch-switch start
+ovs-vsctl add-br br-inner
+ovs-vsctl add-port br-inner eth1
 
+ovs代理服务调整 
+[ovs]
+tenant_network_type = vlan
+network_vlan_ranges = physnet_inner:10:20   #稍后会在交换机设置trunk号范围
+enable_tunneling = False
+integration_bridge = br-int  #默认虚拟机虚拟子网网桥
+local_ip = 10.1.99.104
+bridge_mappings = physnet_inner:br-inner #br-inner 上面已经创建
+[agent]
+[securitygroup]
 
-
-
+启动服务
+/etc/init.d/nova-compute restart
+/etc/init.d/neutron-plugin-openvswitch-agent restart
