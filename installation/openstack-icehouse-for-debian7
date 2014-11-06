@@ -357,7 +357,11 @@ GRANT ALL PRIVILEGES ON `neutrondb`.* TO 'neutron-common'@'localhost'  IDENTIFIE
 GRANT ALL PRIVILEGES ON `neutrondb`.* TO 'neutron-common'@'%'  IDENTIFIED BY 'hc';
 
 
-配置/etc/neutron.conf
+配置/etc/neutron/neutron.conf
+#注意没有安装服务插件,后面的不用就去掉,不然其服务会报错
+#service_plugins = neutron.services.loadbalancer.plugin.LoadBalancerPlugin,neutron.services.metering.metering_plugin.MeteringPlugin,neutron.services.l3_router.l3_router_plugin.L3RouterPlugin
+service_plugins = neutron.services.metering.metering_plugin.MeteringPlugin
+
 rabbit_host = 10.1.99.101
 rabbit_userid = guest
 rabbit_password = hc
@@ -432,7 +436,12 @@ aptitude install linux-headers-3.2.0-4-amd64  bridge-utils
 aptitude install neutron-plugin-ml2 neutron-plugin-openvswitch-agent openvswitch-datapath-dkms neutron-l3-agent neutron-dhcp-agent
 
 
-配置/etc/neutron.conf  (可以cp一份从控制节点)
+配置/etc/netruon/neutron.conf  (可以cp一份从控制节点)
+
+#注意没有安装服务插件,后面的不用就去掉,不然其服务会报错
+#service_plugins = neutron.services.loadbalancer.plugin.LoadBalancerPlugin,neutron.services.metering.metering_plugin.MeteringPlugin,neutron.services.l3_router.l3_router_plugin.L3RouterPlugin
+service_plugins = neutron.services.metering.metering_plugin.MeteringPlugin
+
 rabbit_host = 10.1.99.101
 rabbit_userid = guest
 rabbit_password = hc
@@ -493,7 +502,7 @@ bridge_mappings = physnet_inner:br-inner #br-inner稍后会在网络节点和计
 [securitygroup]
 
 
-设置dhcp-agent服务配置  /etc/neutron/dhcp_agent.ini 在此模式下,网络节点之提供DHCP与元数据转发服务,不需要启动L3服务 /etc/neutron/dhcp_agent.ini
+设置dhcp-agent服务配置/etc/neutron/dhcp_agent.ini 在此模式下,网络节点之提供DHCP与元数据转发服务,不需要启动L3服务 /etc/neutron/dhcp_agent.ini
 [DEFAULT]
 debug = True 
 interface_driver = neutron.agent.linux.interface.OVSInterfaceDriver
@@ -585,6 +594,9 @@ aptitude install neutron-common neutron-plugin-ml2 neutron-pluginopenvswitch-age
 配置/etc/neutron/neutron.conf
 
 [DEFAULT]
+#注意没有安装服务插件,后面的不用就去掉,不然其服务会报错
+#service_plugins = neutron.services.loadbalancer.plugin.LoadBalancerPlugin,neutron.services.metering.metering_plugin.MeteringPlugin,neutron.services.l3_router.l3_router_plugin.L3RouterPlugin
+service_plugins = neutron.services.metering.metering_plugin.MeteringPlugin
 verbose = True
 auth_strategy = keystone
 rabbit_host = 10.1.99.101
@@ -630,3 +642,24 @@ bridge_mappings = physnet_inner:br-inner #br-inner 上面已经创建
 启动服务
 /etc/init.d/nova-compute restart
 /etc/init.d/neutron-plugin-openvswitch-agent restart
+
+
+控制节点节点可以测试下agent是否正常
+root@controller:neutron# neutron agent-list
++--------------------------------------+--------------------+----------+-------+----------------+---------------------------+
+| id                                   | agent_type         | host     | alive | admin_state_up | binary                    |
++--------------------------------------+--------------------+----------+-------+----------------+---------------------------+
+| 126b29e0-e69c-4477-922a-8c8a1b588063 | Open vSwitch agent | network  | :-)   | True           | neutron-openvswitch-agent |
+| c6852375-3fb0-462b-bd7c-18859aacd338 | DHCP agent         | network  | :-)   | True           | neutron-dhcp-agent        |
+| fca6a59f-167b-4746-9646-519f4b05273c | Open vSwitch agent | compute1 | :-)   | True           | neutron-openvswitch-agent |
++--------------------------------------+--------------------+----------+-------+----------------+---------------------------+
+
+
+
+
+
+
+
+
+
+
