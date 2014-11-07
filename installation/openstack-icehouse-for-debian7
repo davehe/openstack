@@ -270,12 +270,17 @@ admin_password = hc
 /etc/init.d/glance-registry start
 
 
-测试
-root@controller:glance# glance image-list
-+----+------+-------------+------------------+------+--------+
-| ID | Name | Disk Format | Container Format | Size | Status |
-+----+------+-------------+------------------+------+--------+
-+----+------+-------------+------------------+------+--------+
+测试上传镜像
+
+root@controller:~# glance image-create --name "centos_7_64" --disk-format qcow2 --container-format bare --is-public True --progress < centos7.qcow2 
+[=============================>] 100%
+
+root@controller:~# glance image-list
++--------------------------------------+-------------+-------------+------------------+-------------+--------+
+| ID                                   | Name        | Disk Format | Container Format | Size        | Status |
++--------------------------------------+-------------+-------------+------------------+-------------+--------+
+| 3db4d0d0-68c2-4973-886f-ba162e1ea0c5 | centos_7_64 | qcow2       | bare             | 1052114944  | active |
++--------------------------------------+-------------+-------------+------------------+-------------+--------+
 
 
 nova安装与配置
@@ -729,6 +734,7 @@ http://10.1.99.101/
 内网 192.168.11.0/24   dhcp 分配地址192.168.11.100,192.168.11.200
 创建访问安全组
 允许TCP,UDP,ICMP通过
+
 
 
 
