@@ -737,8 +737,9 @@ http://10.1.99.101/
 
 
 
+cinder (10.1.99.105)节点安装
 
-
+apt-get install cinder-api cinder-scheduler
 
 
 
