@@ -445,6 +445,7 @@ neutron_admin_auth_url=http://10.1.99.101:35357/v2.0
 service nova-api restart
 service nova-scheduler restart
 service nova-conductor restart
+service nova-spicehtml5proxy restart
 
 启动Neutron server
 service neutron-server start
@@ -704,8 +705,7 @@ CACHES = {
 }
 }
 
-配置Keystone hostname
-
+配置Keystone hostname  连接认证
 vi /etc/openstack-dashboard/local_settings 
 OPENSTACK_HOST = "10.1.99.101"
 
@@ -716,7 +716,7 @@ service memcached restart
 
 
 打开浏览器验证
-http://10.1.99.101/dashboard
+http://10.1.99.101/
 
 
 
