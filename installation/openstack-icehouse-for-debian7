@@ -564,6 +564,11 @@ service neutron-metadata-agent start #如果安装使用元数据代理可以启
 
 
 计算节点安装(compute1 10.1.99.104)：
+实例目录 /var/lib/nova/instances/
+
+
+vim /etc/rc.local
+/sbin/modprobe nbd
 
 安装包
 apt-get install nova-compute-kvm
