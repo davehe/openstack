@@ -248,6 +248,14 @@ keystone endpoint-create \
 --adminurl=http://controller:9292
 
 
+
+注意glance api 开启/etc/glance/glance-api.conf
+# Address to bind the API server
+bind_host = 0.0.0.0
+
+# Port the bind the API server to
+bind_port = 9292
+
 修改/etc/glance/glance-api.conf and /etc/glance/glanceregistry.conf
 [keystone_authtoken]
 auth_host = 10.1.99.101
@@ -274,6 +282,7 @@ nova安装与配置
 
 apt-get install nova-api nova-cert nova-conductor nova-consoleauth nova-novncproxy nova-scheduler python-novaclient
 
+
 在keystone中创建nova相应的用户和服务
 
 keystone user-create --name=nova --pass=hc --email=nova@example.com
@@ -295,7 +304,21 @@ GRANT ALL PRIVILEGES ON `novadb`.* TO 'nova-common'@'localhost' IDENTIFIED BY 'h
 GRANT ALL PRIVILEGES ON `novadb`.* TO 'nova-common'@'%' IDENTIFIED BY 'hc'; 
 
 
-配置nova连接数据库
+查看nova api是否开启 /etc/nova/nova.conf
+enabled_apis = metadata,osapi_compute
+
+# NOVA API #
+# # # # #  #
+osapi_compute_listen="0.0.0.0"
+osapi_compute_listen_port=8774
+api_paste_config=api-paste.ini
+
+# Allows use of instance password during server creation
+enable_instance_password=true
+
+
+配置nova连接数据库  /etc/nova/nova.conf
+
 [database]
 connection = mysql://nova-common:hc@controller/novadb
 
@@ -357,6 +380,14 @@ GRANT ALL PRIVILEGES ON `neutrondb`.* TO 'neutron-common'@'localhost'  IDENTIFIE
 GRANT ALL PRIVILEGES ON `neutrondb`.* TO 'neutron-common'@'%'  IDENTIFIED BY 'hc';
 
 
+查看neutron api是否开启  /etc/neutron/neutron.conf
+# Address to bind the API server to
+bind_host = 0.0.0.0
+
+# Port the bind the API server to
+bind_port = 9696
+
+
 配置/etc/neutron/neutron.conf
 #注意没有安装服务插件,后面的不用就去掉,不然其服务会报错
 #service_plugins = neutron.services.loadbalancer.plugin.LoadBalancerPlugin,neutron.services.metering.metering_plugin.MeteringPlugin,neutron.services.l3_router.l3_router_plugin.L3RouterPlugin
@@ -384,7 +415,7 @@ notify_nova_on_port_data_changes = True
 nova_url = http://10.1.99.101:8774/v2
 nova_admin_username = admin
 nova_admin_tenant_id = a5e40cc19c7d4022a0a32dd67588c8bb
-nova_admin_password = ta0mee@123
+nova_admin_password = admin
 nova_admin_auth_url = http://10.1.99.101:35357/v2.0
 
 
@@ -464,7 +495,7 @@ notify_nova_on_port_data_changes = True
 nova_url = http://10.1.99.101:8774/v2
 nova_admin_username = admin
 nova_admin_tenant_id = a5e40cc19c7d4022a0a32dd67588c8bb
-nova_admin_password = ta0mee@123
+nova_admin_password = admin
 nova_admin_auth_url = http://10.1.99.101:35357/v2.0
 
 
@@ -607,7 +638,7 @@ notify_nova_on_port_data_changes = True
 nova_url = http://10.1.99.101:8774/v2
 nova_admin_username = admin
 nova_admin_tenant_id = a5e40cc19c7d4022a0a32dd67588c8bb
-nova_admin_password = hc1226
+nova_admin_password = admin
 nova_admin_auth_url = http://10.1.99.101:35357/v2.0
 
 [keystone_authtoken]
