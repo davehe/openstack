@@ -623,14 +623,14 @@ auth_version = v2.0
  /etc/init.d/nova-compute start
 
 
-配置内核参数
+配置内核参数 /etc/sysctl.conf 
 net.ipv4.conf.all.rp_filter=0
 net.ipv4.conf.default.rp_filter=0
 
 sysctl -p
 
 aptitude install linux-headers-3.2.0-4-amd64  bridge-utils
-aptitude install neutron-common neutron-plugin-ml2 neutron-pluginopenvswitch-agent openvswitch-datapath-dkms
+aptitude install neutron-common neutron-plugin-ml2 neutron-plugin-openvswitch-agent openvswitch-datapath-dkms
 
 
 配置/etc/neutron/neutron.conf
@@ -670,7 +670,7 @@ connection = mysql://neutron-common:hc1226@controller/neutrondb
 ovs-vsctl add-br br-inner
 ovs-vsctl add-port br-inner eth1
 
-ovs代理服务调整 
+ovs代理服务调整  /etc/neutron/plugins/openvswitch
 [ovs]
 tenant_network_type = vlan
 network_vlan_ranges = physnet_inner:10:20   #稍后会在交换机设置trunk号范围
