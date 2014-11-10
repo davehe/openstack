@@ -821,6 +821,8 @@ cinder-scheduler controller                           nova             enabled  
 
 
 
+
+
 Cinder block storage (10.1.99.105)节点安装
 
 
@@ -867,11 +869,14 @@ admin_tenant_name = admin
 
 
 配置 iSCSI target 服务发现 Block Storage volumes
-include /etc/cinder/volumes/*
+include /var/lib/cinder/volumes/*
 
 
 启动cinder-volume 服务
 service cinder-volume start
+tgtd 
+
+
 
 nova.conf中增加cinder相关配置
 在nova-api中与计算节点中,nova.conf需要有一下条目
@@ -881,9 +886,13 @@ cinder_cross_az_attach=true
 libvirt_volume_drivers=iscsi=nova.virt.libvirt.volume.LibvirtISCSIVolumeDriver,local=nova.virt.libvirt.volume.LibvirtVolumeDriver,fake=nova.virt.libvirt.volume.LibvirtFakeVolumeDriver,rbd=nova.virt.libvirt.volume.LibvirtNetVolumeDriver,sheepdog=nova.virt.libvirt.volume.LibvirtNetVolumeDriver,nfs=nova.virt.libvirt.volume.LibvirtNFSVolumeDriver,aoe=nova.virt.libvirt.volume.LibvirtAOEVolumeDriver,glusterfs=nova.virt.libvirt.volume.LibvirtGlusterfsVolumeDriver,fibre_channel=nova.virt.libvirt.volume.LibvirtFibreChannelVolumeDriver,scality=nova.virt.libvirt.volume.LibvirtScalityVolumeDriver
 
 
+测试cinder
+cinder create --display-name myVolume_1 2
 
-
-
-
-
+cinder list
++--------------------------------------+-----------+--------------+------+-------------+----------+--------------------------------------+
+|                  ID                  |   Status  | Display Name | Size | Volume Type | Bootable |             Attached to              |
++--------------------------------------+-----------+--------------+------+-------------+----------+--------------------------------------+
+| 9dd7086a-83cb-4be5-9a04-41fc06a41e4c | available |  myVolume_1  |  2   |     None    |  false   |                                      |
++--------------------------------------+-----------+--------------+------+-------------+----------+--------------------------------------+
 
