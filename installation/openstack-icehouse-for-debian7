@@ -103,6 +103,8 @@ apt-get install ntpdate
 更改配置文件/etc/default/ntpdate  指定到内网时间服务器10.1.1.10
 NTPSERVERS="10.1.1.10"
 
+更改时区
+cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime 
 
 增加定时任务
 */30 * * * *    /usr/sbin/ntpdate-debian && /sbin/hwclock --directisa -w 
