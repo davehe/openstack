@@ -886,7 +886,7 @@ cinder_cross_az_attach=true
 libvirt_volume_drivers=iscsi=nova.virt.libvirt.volume.LibvirtISCSIVolumeDriver,local=nova.virt.libvirt.volume.LibvirtVolumeDriver,fake=nova.virt.libvirt.volume.LibvirtFakeVolumeDriver,rbd=nova.virt.libvirt.volume.LibvirtNetVolumeDriver,sheepdog=nova.virt.libvirt.volume.LibvirtNetVolumeDriver,nfs=nova.virt.libvirt.volume.LibvirtNFSVolumeDriver,aoe=nova.virt.libvirt.volume.LibvirtAOEVolumeDriver,glusterfs=nova.virt.libvirt.volume.LibvirtGlusterfsVolumeDriver,fibre_channel=nova.virt.libvirt.volume.LibvirtFibreChannelVolumeDriver,scality=nova.virt.libvirt.volume.LibvirtScalityVolumeDriver
 
 
-测试cinder
+controler 节点测试cinder
 cinder create --display-name myVolume_1 2
 
 cinder list
