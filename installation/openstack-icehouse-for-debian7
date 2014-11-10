@@ -667,6 +667,11 @@ admin_password = hc1226
 connection = mysql://neutron-common:hc1226@controller/neutrondb
 
 
+针对cpu模式调整
+vim /etc/nova/nova-compute.conf
+cpu_mode=host-passthrough
+
+
 创建br-inner网桥,将eth1桥接上去,用以网络节点与计算节点互联
 /etc/init.d/openvswitch-switch start
 ovs-vsctl add-br br-inner
