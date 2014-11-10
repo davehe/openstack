@@ -779,7 +779,7 @@ keystone endpoint-create \
 --adminurl=http://controller:8776/v2/%\(tenant_id\)s
 
 
-配置cinder Keystone认证 rabbit等 /etc/cinder/cinder.conf
+配置cinder Keystone认证 rabbit (其他参数如glance_host在cinder节点配置生效) /etc/cinder/cinder.conf 
 
 [DEFAULT]
 rootwrap_config = /etc/cinder/rootwrap.conf
@@ -791,7 +791,7 @@ rabbit_password = hc1226
 glance_host=10.1.99.101
 auth_strategy=keystone
 verbose=true
-iscsi_ip_address=10.1.99.101
+iscsi_ip_address=10.1.99.105
 iscsi_helper=tgtadm
 volume_group = cinder-volumes
 [BRCD_FABRIC_EXAMPLE]
@@ -814,12 +814,71 @@ admin_tenant_name = service
 service cinder-scheduler restart
 service cinder-api restart
 
+查看cinder服务状态
+cinder-manage service list
+Binary           Host                                 Zone             Status     State Updated At
+cinder-scheduler controller                           nova             enabled    :-)   2014-11-10 08:05:27
 
 
 
+Cinder block storage (10.1.99.105)节点安装
+
+
+安装Cinder 相关包
+
+apt-get install cinder-volume
+
+创建一个新磁盘，用于block 的分配
+
+pvcreate /dev/sda6
+vgcreate cinder-volumes /dev/sda6 
+
+
+配置Keystone 认证,rabbit，配置数据库连接,配置Glance server,配置cinder-volume 的ip,
+
+[DEFAULT]
+rootwrap_config = /etc/cinder/rootwrap.conf
+api_paste_confg = /etc/cinder/api-paste.ini
+rabbit_host = 10.1.99.101
+rabbit_port=5672
+rabbit_userid = guest
+rabbit_password = hc1226
+glance_host=10.1.99.101
+auth_strategy=keystone
+verbose=true
+iscsi_ip_address=10.1.99.105
+iscsi_helper=tgtadm
+volume_group = cinder-volumes
+[BRCD_FABRIC_EXAMPLE]
+[database]
+connection=mysql://cinder-common:hc1226@10.1.99.101/cinder
+[fc-zone-manager]
+[keymgr]
+[keystone_authtoken]
+auth_uri = http://10.1.99.101:5000
+auth_host = 10.1.99.101
+auth_protocol=http
+admin_user = cinder
+admin_password = hc1226
+admin_tenant_name = admin
+[matchmaker_ring]
+[ssl]
 
 
 
+配置 iSCSI target 服务发现 Block Storage volumes
+include /etc/cinder/volumes/*
+
+
+启动cinder-volume 服务
+service cinder-volume start
+
+nova.conf中增加cinder相关配置
+在nova-api中与计算节点中,nova.conf需要有一下条目
+volume_api_class=nova.volume.cinder.API
+cinder_api_insecure=false
+cinder_cross_az_attach=true
+libvirt_volume_drivers=iscsi=nova.virt.libvirt.volume.LibvirtISCSIVolumeDriver,local=nova.virt.libvirt.volume.LibvirtVolumeDriver,fake=nova.virt.libvirt.volume.LibvirtFakeVolumeDriver,rbd=nova.virt.libvirt.volume.LibvirtNetVolumeDriver,sheepdog=nova.virt.libvirt.volume.LibvirtNetVolumeDriver,nfs=nova.virt.libvirt.volume.LibvirtNFSVolumeDriver,aoe=nova.virt.libvirt.volume.LibvirtAOEVolumeDriver,glusterfs=nova.virt.libvirt.volume.LibvirtGlusterfsVolumeDriver,fibre_channel=nova.virt.libvirt.volume.LibvirtFibreChannelVolumeDriver,scality=nova.virt.libvirt.volume.LibvirtScalityVolumeDriver
 
 
 
