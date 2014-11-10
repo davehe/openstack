@@ -737,9 +737,86 @@ http://10.1.99.101/
 
 
 
-cinder (10.1.99.105)节点安装
+cinder controller (10.1.99.101)节点安装
 
 apt-get install cinder-api cinder-scheduler
+
+设置数据库连接 /etc/cinder/cinder.conf
+[database]
+connection=mysql://cinder-common:hc1226@10.1.99.101/cinder
+
+数据库创建授权
+create database cinder;
+GRANT ALL PRIVILEGES ON `cinder`.* TO 'cinder-common'@'localhost' IDENTIFIED BY 'hc';
+GRANT ALL PRIVILEGES ON `cinder`.* TO 'cinder-common'@'%' IDENTIFIED BY 'hc';
+
+初始化数据库
+/bin/sh -c "cinder-manage db sync" cinder
+
+在Keystone中创建cinder 系统用户
+keystone user-create --name=cinder --pass=hc1226 --email=cinder@example.com
+keystone user-role-add --user=cinder --tenant=service --role=admin
+
+在Keystone注册一个cinder 的 service
+keystone service-create --name=cinder --type=volume --description="OpenStack Block Storage"
+
+创建一个 cinder 的 endpoint
+keystone endpoint-create \
+--service-id=$(keystone service-list | awk '/ volume / {print $2}') \
+--publicurl=http://controller:8776/v1/%\(tenant_id\)s \
+--internalurl=http://controller:8776/v1/%\(tenant_id\)s \
+--adminurl=http://controller:8776/v1/%\(tenant_id\)s
+
+在Keystone注册一个cinderv2 的 service
+keystone service-create --name=cinderv2 --type=volumev2 --description="OpenStack Block Storage v2"
+
+
+创建一个 cinderv2 的 endpoint
+keystone endpoint-create \
+--service-id=$(keystone service-list | awk '/ volumev2 / {print $2}') \
+--publicurl=http://controller:8776/v2/%\(tenant_id\)s \
+--internalurl=http://controller:8776/v2/%\(tenant_id\)s \
+--adminurl=http://controller:8776/v2/%\(tenant_id\)s
+
+
+配置cinder Keystone认证 rabbit等 /etc/cinder/cinder.conf
+
+[DEFAULT]
+rootwrap_config = /etc/cinder/rootwrap.conf
+api_paste_confg = /etc/cinder/api-paste.ini
+rabbit_host = 10.1.99.101
+rabbit_port=5672
+rabbit_userid = guest
+rabbit_password = hc1226
+glance_host=10.1.99.101
+auth_strategy=keystone
+verbose=true
+iscsi_ip_address=10.1.99.101
+iscsi_helper=tgtadm
+volume_group = cinder-volumes
+[BRCD_FABRIC_EXAMPLE]
+[database]
+connection=mysql://cinder-common:hc1226@10.1.99.101/cinder
+[fc-zone-manager]
+[keymgr]
+[keystone_authtoken]
+auth_uri = http://10.1.99.101:5000
+auth_host = 10.1.99.101
+auth_protocol=http
+admin_user = cinder
+admin_password = hc1226
+admin_tenant_name = service
+[matchmaker_ring]
+[ssl]
+
+
+启动cinder controller 相关服务
+service cinder-scheduler restart
+service cinder-api restart
+
+
+
+
 
 
 
