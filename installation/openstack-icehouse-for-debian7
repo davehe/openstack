@@ -899,6 +899,35 @@ admin_tenant_name = admin
 [ssl]
 
 
+#如果后端有多个网卡分流,可如下配置
+#enabled_backends=lvmdriver-1,lvmdriver-2,lvmdriver-3
+#[lvmdriver-1]
+#volume_clear=none
+#iscsi_ip_address=192.168.242.40
+#volume_group=cinder-volumes
+#volume_driver=cinder.volume.drivers.lvm.LVMISCSIDriver
+#volume_backend_name=LVM_cinder40
+#[lvmdriver-2]
+#volume_clear=none
+#iscsi_ip_address=192.168.242.41
+#volume_group=cinder-volumes
+#volume_driver=cinder.volume.drivers.lvm.LVMISCSIDriver
+#volume_backend_name=LVM_cinder41
+#[lvmdriver-3]
+#volume_clear=none
+#iscsi_ip_address=192.168.242.42
+#volume_group=cinder-volumes
+#volume_driver=cinder.volume.drivers.lvm.LVMISCSIDriver
+#volume_backend_name=LVM_cinder42
+
+#以下是控制节点里cinder配置文件更改
+#multi backends configure
+scheduler_driver=cinder.scheduler.filter_scheduler.FilterScheduler
+
+#在管理节点登录
+#在界面上建立type  cinder1-1
+cinder type-key cinder1-1 set volume_backend_name=LVM_cinder47  指定后端存储
+
 
 配置 iSCSI target 服务发现 Block Storage volumes
 include /var/lib/cinder/volumes/*
