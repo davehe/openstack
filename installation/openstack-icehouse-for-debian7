@@ -837,6 +837,9 @@ admin_tenant_name = service
 #volume_driver=cinder.volume.drivers.lvm.LVMISCSIDriver
 #volume_backend_name=LVM_cinder42
 
+#以下是控制节点里cinder配置文件更改
+#multi backends configure
+scheduler_driver=cinder.scheduler.filter_scheduler.FilterScheduler
 
 
 启动cinder controller 相关服务
